@@ -14,7 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity //enable the spring security
 @AllArgsConstructor
 public class SecurityConfig {
 
@@ -33,14 +33,17 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**", "/oauth2/**", "/login/oauth2/**", "/login/**").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest()
+                        .authenticated()
                 )
                 .oauth2Login(oauth -> oauth
                         .successHandler(oAuth2SuccessHandler)
-                        .failureHandler((request, response, exception) -> {
+                        .failureHandler(
+                                (request, response, exception) -> {
                             LOGGER.error("OAuth2 login FAILED: {}", exception.getMessage(), exception);
                             response.sendRedirect("http://localhost:5173/login?error=oauth_failed");
-                        })
+                        }
+                        )
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
