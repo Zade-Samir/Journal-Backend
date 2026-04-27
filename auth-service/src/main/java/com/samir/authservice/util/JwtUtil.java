@@ -11,8 +11,15 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private final String SECRET = "my-super-secret-key-that-is-long-enough";
-    private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    @Value("${jwt.secret}")
+    private String SECRET;
+    private Key key;
+
+    //this method run automatically after the Bean is created and @Value is injected.
+    @PostConstruct
+    public void init() {
+        this.key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    }
 
     public String generateToken(String email, String role) {
 
